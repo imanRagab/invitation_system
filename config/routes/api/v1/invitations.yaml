@@ -2,3 +2,10 @@ invitation_send:
     path: invitations
     controller: App\Controller\API\V1\InvitationController::sendInvitation
     methods: [POST]
+
+invitation_accept:
+    path: invitations/{id}/accept
+    controller: App\Controller\API\V1\InvitationController::acceptInvitation
+    methods: [PATCH]
+    requirements:
+        id: '\d+'

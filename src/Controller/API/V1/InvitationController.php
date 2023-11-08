@@ -11,6 +11,7 @@ use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Component\Workflow\Registry;
 use App\Entity\User;
 use App\Entity\Invitation;
+use App\Utils\InvitationConstants;
 
 class InvitationController extends AbstractController
 {
@@ -37,5 +38,19 @@ class InvitationController extends AbstractController
             'groups' => 'invitation_create',
         ]);
         return new Response($jsonContent, Response::HTTP_CREATED, ['Content-Type' => 'application/json']);
+    }
+
+    public function acceptInvitation(Request $request, Invitation $invitation,
+                    Registry $workflowRegistry, EntityManagerInterface $entityManager): Response
+    {
+        $workflow = $workflowRegistry->get($invitation, 'invitation');
+
+        if ($workflow->can($invitation, 'accept')) {
+            $workflow->apply($invitation, 'accept');
+            $entityManager->persist($invitation);
+            $entityManager->flush();
+            return new Response(InvitationConstants::ACCEPT_SUCCESS_MSG, Response::HTTP_OK);
+        }
+        return new Response(InvitationConstants::ACCEPT_ERROR_MSG, Response::HTTP_BAD_REQUEST);
     }
 }

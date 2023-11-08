@@ -1,0 +1,25 @@
+framework:
+    workflows:
+        invitation:
+            type: 'state_machine'
+            marking_store:
+                type: 'single_state'
+                arguments:
+                    - 'status'
+            supports:
+                - App\Entity\Invitation
+            places:
+                - pending
+                - accepted
+                - declined
+                - cancelled
+            transitions:
+                accept:
+                    from: pending
+                    to:   accepted
+                decline:
+                    from: pending
+                    to:   declined
+                cancel:
+                    from: pending
+                    to:   cancelled
