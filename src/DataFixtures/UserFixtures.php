@@ -17,13 +17,22 @@ class UserFixtures extends Fixture
     }
     public function load(ObjectManager $manager): void
     {
-        $user = new User();
-        $user->setEmail("admin@email.com");
-        $user->setPassword($this->passwordEncoder->encodePassword(
-            $user,
+        $admin = new User();
+        $admin->setEmail("admin@invsys.com");
+        $admin->setPassword($this->passwordEncoder->encodePassword(
+            $admin,
             'admin'
         ));
-        $manager->persist($user);
+        $manager->persist($admin);
+        for ($count = 1; $count <= 20; $count++) {
+            $user = new User();
+            $user->setEmail('user' . $count . '@invsys.com');
+            $user->setPassword($this->passwordEncoder->encodePassword(
+                $user,
+                'password'
+            ));
+            $manager->persist($user);
+        }
         $manager->flush();
     }
 }
