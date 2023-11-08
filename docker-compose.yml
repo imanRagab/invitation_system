@@ -1,0 +1,12 @@
+services:
+    db:
+        image: ${DB_IMAGE}
+        environment:
+            - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
+            - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+            - MYSQL_DATABASE=${MYSQL_DATABASE}
+            - MYSQL_USER=${MYSQL_USER}
+    web:
+        build: .
+        ports:
+            - ${WEB_PORT}:80
