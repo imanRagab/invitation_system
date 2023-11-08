@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\UserRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\UserInterface;
 
@@ -34,6 +36,22 @@ class User implements UserInterface
      * @ORM\Column(type="string")
      */
     private $password;
+
+    /**
+     * @ORM\OneToMany(targetEntity=Invitation::class, mappedBy="sender")
+     */
+    private $sentInvitations;
+
+    /**
+     * @ORM\OneToMany(targetEntity=Invitation::class, mappedBy="invited")
+     */
+    private $receivedInvitations;
+
+    public function __construct()
+    {
+        $this->sentInvitations = new ArrayCollection();
+        $this->receivedInvitations = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -114,5 +132,65 @@ class User implements UserInterface
     {
         // If you store any temporary, sensitive data on the user, clear it here
         // $this->plainPassword = null;
+    }
+
+    /**
+     * @return Collection<int, Invitation>
+     */
+    public function getSentInvitations(): Collection
+    {
+        return $this->sentInvitations;
+    }
+
+    public function addSentInvitation(Invitation $sentInvitation): self
+    {
+        if (!$this->sentInvitations->contains($sentInvitation)) {
+            $this->sentInvitations[] = $sentInvitation;
+            $sentInvitation->setSender($this);
+        }
+
+        return $this;
+    }
+
+    public function removeSentInvitation(Invitation $sentInvitation): self
+    {
+        if ($this->sentInvitations->removeElement($sentInvitation)) {
+            // set the owning side to null (unless already changed)
+            if ($sentInvitation->getSender() === $this) {
+                $sentInvitation->setSender(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Invitation>
+     */
+    public function getReceivedInvitations(): Collection
+    {
+        return $this->receivedInvitations;
+    }
+
+    public function addReceivedInvitation(Invitation $receivedInvitation): self
+    {
+        if (!$this->receivedInvitations->contains($receivedInvitation)) {
+            $this->receivedInvitations[] = $receivedInvitation;
+            $receivedInvitation->setInvited($this);
+        }
+
+        return $this;
+    }
+
+    public function removeReceivedInvitation(Invitation $receivedInvitation): self
+    {
+        if ($this->receivedInvitations->removeElement($receivedInvitation)) {
+            // set the owning side to null (unless already changed)
+            if ($receivedInvitation->getInvited() === $this) {
+                $receivedInvitation->setInvited(null);
+            }
+        }
+
+        return $this;
     }
 }
