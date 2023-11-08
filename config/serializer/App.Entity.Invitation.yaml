@@ -1,0 +1,6 @@
+App\Entity\Invitation:
+    attributes:
+        id:
+            groups: ['invitation_create']
+        status:
+            groups: ['invitation_create']

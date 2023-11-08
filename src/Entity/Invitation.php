@@ -4,7 +4,7 @@ namespace App\Entity;
 
 use App\Repository\InvitationRepository;
 use Doctrine\ORM\Mapping as ORM;
-
+use App\Utils\InvitationConstants;
 /**
  * @ORM\Entity(repositoryClass=InvitationRepository::class)
  */
@@ -32,7 +32,7 @@ class Invitation
     /**
      * @ORM\Column(type="string", length=255)
      */
-    private $status;
+    private $status = InvitationConstants::STATUS_PENDING;
 
     public function getId(): ?int
     {
