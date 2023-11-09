@@ -9,3 +9,17 @@ invitation_accept:
     methods: [PATCH]
     requirements:
         id: '\d+'
+
+invitation_decline:
+    path: invitations/{id}/decline
+    controller: App\Controller\API\V1\InvitationController::declineInvitation
+    methods: [PATCH]
+    requirements:
+        id: '\d+'
+
+invitation_cancel:
+    path: invitations/{id}/cancel
+    controller: App\Controller\API\V1\InvitationController::cancelInvitation
+    methods: [PATCH]
+    requirements:
+        id: '\d+'

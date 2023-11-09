@@ -55,6 +55,80 @@ class InvitationsAPITest extends WebTestCase
         $this->assertEquals(InvitationConstants::STATUS_ACCEPTED, $updatedInvitation->getStatus());
     }
 
+    public function testDeclineInvitationSucess(): void
+    {
+        $client = static::createClient();
+        $container = self::$container;
+        $entityManager = $container->get('doctrine.orm.default_entity_manager');
+
+        $invitation = $this->_create_invitation($entityManager);
+        $client->request('PATCH', $this::API_PREFIX . 'invitations/' . $invitation->getId() . '/decline');
+
+        // Check the response - should get bad request
+        $this->assertResponseIsSuccessful();
+        $this->assertEquals(Response::HTTP_OK, $client->getResponse()->getStatusCode());
+
+        // Assert the invitation status has been changed to 'declined'
+        $updatedInvitation = $entityManager->getRepository(Invitation::class)->find($invitation->getId());
+        $this->assertEquals(InvitationConstants::STATUS_DECLINED, $updatedInvitation->getStatus());
+    }
+
+    public function testDeclineInvitationFail(): void
+    {
+        $client = static::createClient();
+        $container = self::$container;
+        $entityManager = $container->get('doctrine.orm.default_entity_manager');
+
+        $invitation = $this->_create_invitation($entityManager);
+        $invitation->setStatus(InvitationConstants::STATUS_ACCEPTED);
+        $client->request('PATCH', $this::API_PREFIX . 'invitations/' . $invitation->getId() . '/decline');
+
+        // Check the response - should get bad request
+        $client->getResponse()->isClientError();
+        $this->assertEquals(Response::HTTP_BAD_REQUEST, $client->getResponse()->getStatusCode());
+
+        // Assert the invitation status has not been changed to 'declined'
+        $updatedInvitation = $entityManager->getRepository(Invitation::class)->find($invitation->getId());
+        $this->assertNotEquals(InvitationConstants::STATUS_DECLINED, $updatedInvitation->getStatus());
+    }
+
+    public function testCancelInvitationSucess(): void
+    {
+        $client = static::createClient();
+        $container = self::$container;
+        $entityManager = $container->get('doctrine.orm.default_entity_manager');
+
+        $invitation = $this->_create_invitation($entityManager);
+        $client->request('PATCH', $this::API_PREFIX . 'invitations/' . $invitation->getId() . '/cancel');
+
+        // Check the response - should get bad request
+        $this->assertResponseIsSuccessful();
+        $this->assertEquals(Response::HTTP_OK, $client->getResponse()->getStatusCode());
+
+        // Assert the invitation status has been changed to 'cancelled'
+        $updatedInvitation = $entityManager->getRepository(Invitation::class)->find($invitation->getId());
+        $this->assertEquals(InvitationConstants::STATUS_CANCELLED, $updatedInvitation->getStatus());
+    }
+
+    public function testCancelInvitationFail(): void
+    {
+        $client = static::createClient();
+        $container = self::$container;
+        $entityManager = $container->get('doctrine.orm.default_entity_manager');
+
+        $invitation = $this->_create_invitation($entityManager);
+        $invitation->setStatus(InvitationConstants::STATUS_ACCEPTED);
+        $client->request('PATCH', $this::API_PREFIX . 'invitations/' . $invitation->getId() . '/cancel');
+
+        // Check the response - should get bad request
+        $client->getResponse()->isClientError();
+        $this->assertEquals(Response::HTTP_BAD_REQUEST, $client->getResponse()->getStatusCode());
+
+        // Assert the invitation status has not been changed to 'cancelled'
+        $updatedInvitation = $entityManager->getRepository(Invitation::class)->find($invitation->getId());
+        $this->assertNotEquals(InvitationConstants::STATUS_CANCELLED, $updatedInvitation->getStatus());
+    }
+
     private function _create_invitation($entityManager): Invitation
     {
         $sender = $entityManager->getReference(User::class, 2 );

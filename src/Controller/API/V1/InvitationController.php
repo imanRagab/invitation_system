@@ -69,4 +69,30 @@ class InvitationController extends AbstractController
         return new Response(InvitationConstants::ACCEPT_ERROR_MSG, Response::HTTP_BAD_REQUEST);
     }
 
+    public function declineInvitation(Request $request, Invitation $invitation): Response
+    {
+        $workflow = $this->workflowRegistry->get($invitation, 'invitation');
+
+        if ($workflow->can($invitation, 'decline')) {
+            $workflow->apply($invitation, 'decline');
+            $this->entityManager->persist($invitation);
+            $this->entityManager->flush();
+            return new Response(InvitationConstants::DECLINE_SUCCESS_MSG, Response::HTTP_OK);
+        }
+        return new Response(InvitationConstants::DECLINE_ERROR_MSG, Response::HTTP_BAD_REQUEST);    
+    }
+
+    public function cancelInvitation(Request $request, Invitation $invitation): Response
+    {
+        $workflow = $this->workflowRegistry->get($invitation, 'invitation');
+
+        if ($workflow->can($invitation, 'cancel')) {
+            $workflow->apply($invitation, 'cancel');
+            $this->entityManager->persist($invitation);
+            $this->entityManager->flush();
+            return new Response(InvitationConstants::CANCELL_SUCCESS_MSG, Response::HTTP_OK);
+        }
+        return new Response(InvitationConstants::CANCELL_ERROR_MSG, Response::HTTP_BAD_REQUEST);      
+    }
+
 }
