@@ -1,0 +1,51 @@
+# Invitation System API
+
+This project provides a RESTful API for an invitation system, allowing users to send, accept, decline, and cancel invitations. It is built using Symfony 4.4 and is designed to be run in Docker containers, ensuring easy setup and consistent environments across different systems.
+
+## Getting Started
+
+These instructions will get you a copy of the project up and running on your local machine for development and testing purposes.
+
+### Prerequisites
+
+Ensure Docker and Docker Compose are installed on your system:
+
+- Docker: https://docs.docker.com/get-docker/
+- Docker Compose: https://docs.docker.com/compose/install/
+
+### Installation
+
+Clone the repository to your local machine:
+
+```
+git clone https://github.com/yourusername/invitation-system.git
+```
+Navigate to the project directory:
+
+```
+cd invitation-system
+```
+
+Start the application with Docker Compose:
+
+```
+docker-compose up -d
+```
+
+The application will be accessible at http://localhost:8080.
+
+### Running the Tests
+```
+docker-compose exec ./bin/phpunit
+```
+
+## Built With
+* Symfony 4.4 - The web framework used.
+* Docker - Containerization platform.
+* PHPUnit - The PHP testing framework.
+
+## Future Enhancements
+1. API Authentication: For production readiness, the implementation of a secure authentication mechanism (like OAuth2 or JWT) is necessary.
+2. User Roles & Authorization: The system currently lacks user roles or permissions checks. Implementing authorization checks to ensure users can only perform actions they are permitted to is an essential step for future development.
+3. Extended Testing: The current test suite covers basic functionalities. More comprehensive test cases should be added to ensure thorough interaction testing between API endpoints.
+4. Invitation Logic: The business logic assumes that invitations can only be cancelled if they are pending. This may need to be adjustable according to future business requirements.
