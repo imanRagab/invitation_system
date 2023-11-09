@@ -129,6 +129,32 @@ class InvitationsAPITest extends WebTestCase
         $this->assertNotEquals(InvitationConstants::STATUS_CANCELLED, $updatedInvitation->getStatus());
     }
 
+    public function testSendThenAcceptInvitationSuccess(): void
+    {
+        $client = static::createClient();
+        $container = self::$container;
+        $entityManager = $container->get('doctrine.orm.default_entity_manager');
+
+        $client->request('POST', $this::API_PREFIX . 'invitations', [
+            'sender_id' => 2,
+            'invited_id' => 3
+        ]);
+
+        // Assert the response status code
+        $this->assertEquals(Response::HTTP_CREATED, $client->getResponse()->getStatusCode());
+
+        $responseData = json_decode($client->getResponse()->getContent(), true);
+
+        $client->request('PATCH', $this::API_PREFIX . 'invitations/' . $responseData['id'] . '/accept');
+
+        // Check the response
+        $this->assertResponseIsSuccessful();
+
+        // Assert the invitation status has been changed to 'accepted'
+        $updatedInvitation = $entityManager->getRepository(Invitation::class)->find($responseData['id']);
+        $this->assertEquals(InvitationConstants::STATUS_ACCEPTED, $updatedInvitation->getStatus());
+    }
+
     private function _create_invitation($entityManager): Invitation
     {
         $sender = $entityManager->getReference(User::class, 2 );
