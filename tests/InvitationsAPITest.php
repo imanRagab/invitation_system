@@ -12,7 +12,7 @@ class InvitationsAPITest extends WebTestCase
 {
     const API_PREFIX = '/api/v1/';
 
-    public function testSendInvitation(): void
+    public function testSendInvitationSuccess(): void
     {
         $client = static::createClient();
 
@@ -38,7 +38,7 @@ class InvitationsAPITest extends WebTestCase
 
     }
 
-    public function testAcceptInvitation(): void
+    public function testAcceptInvitationSuccess(): void
     {
         $client = static::createClient();
         $container = self::$container;
